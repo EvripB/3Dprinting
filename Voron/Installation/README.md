@@ -95,11 +95,13 @@ The output is the firmware that needs to be installed on the board. It is locate
 # Wi-Fi disconnections fix
 
 Guide followed: https://weworkweplay.com/play/rebooting-the-raspberry-pi-when-it-loses-wireless-connection-wifi/
-1)	Log into Rpi and execute:
-`cd /usr/local/bin`
-`sudo touch checkwifi.sh`
-`sudo chmod 775 checkwifi.sh`
-`sudo vi checkwifi.sh`
+
+1)	Log into Rpi and execute:  
+`cd /usr/local/bin`  
+`sudo touch checkwifi.sh`  
+`sudo chmod 775 checkwifi.sh`  
+`sudo vi checkwifi.sh`  
+
 2)	Paste the following code
 ```
 ping -c4 192.168.1.254 > /dev/null
