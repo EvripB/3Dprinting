@@ -94,6 +94,8 @@ The output is the firmware that needs to be installed on the board. It is locate
 
 # Wi-Fi disconnections fix
 
+Rpi sometimes loses Wi-Fi connection and it doesn't reconnect without a restart, which is not possible during printing. The below fix will monitor Rpi's connection every 1 minute and restarts it if it is lost.
+
 Guide followed: https://weworkweplay.com/play/rebooting-the-raspberry-pi-when-it-loses-wireless-connection-wifi/
 
 1)	Log into Rpi and execute:  
