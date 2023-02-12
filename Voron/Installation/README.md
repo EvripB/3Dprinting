@@ -82,7 +82,7 @@ Validate the configuration is correct and press “q” to exit.
 
 Press “Y” to save the configuration
 
-8)	Execute: `make`
+8)	Execute: `make`  
 The output is the firmware that needs to be installed on the board. It is located in `/home/pi/klipper/out` and it is named `klipper.bin`.
 
 9)	There are several ways to flash the firmware into the Spider board. We will use the sd-card method mentioned in the documentation. Login into Rpi via WinSCP or Moba’s SFTP and download the klipper.bin we created in step (8). I maintain these firmwares in `E:\MyFiles\Documents\3D_Printing\Voron\Software\klipper`  
