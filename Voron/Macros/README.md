@@ -1,3 +1,9 @@
+##### Table of Contents  
+[PRINT_START macro](#PRINT_START)  
+
+test
+
+<a name="PRINT_START"/>
 # PRINT_START macro
 
 The below macro will perform a G32 gcode (see `[gcode_macro G32]` below for exact tasks) and then print a line at the front of the bed along the X axis. PRIME_LINE command has been commented-out as it already includes a prime-line.
