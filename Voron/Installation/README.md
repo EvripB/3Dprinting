@@ -11,7 +11,7 @@ Guide followed: https://docs.vorondesign.com/build/software/installing_mainsail.
 
 4)	Select the .img file
 
-5)	Select the SD card. Careful! It might have selected a normal drive
+5)	Select the SD card. <span style="color:red">**Careful! It might have selected a normal drive**</span>
 
 6)	Open mainsailos-wpa-supplicant.txt and add the WiFi connections. Under “WPA/WPA2 secured”, add the following two networks:
 
@@ -50,3 +50,12 @@ d.	Select “Europe”
 e.	Select “Athens”  
 f.	Select “Finish” (of whatever.. just exit the config)  
 6)	Execute: `sudo raspi-config` and select “8 Update”. Wait until it finishes. Usually there are no updates to be performed
+
+# Build & install Firmware
+
+Guide followed: https://docs.vorondesign.com/build/software/spider_klipper.html
+1)	Power-on the Rpi
+2)	Execute: `sudo apt install make`
+3)	Execute: `cd ~/klipper`
+4)	Execute: `make clean`
+5)	Execute: `make menuconfig`
