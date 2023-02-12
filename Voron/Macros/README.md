@@ -88,7 +88,9 @@ gcode:
 
 The below macro will bring the toolhead at the front of the printer to perform "service" activities, i.e. change nozzle, filament etc.
 
+```
 [gcode_macro SERVICE]
 gcode:
     G90                      ; absolute positioning
     G0 X235 Y20 Z35 F3600    ; move to X235 Y20 Z35
+```
