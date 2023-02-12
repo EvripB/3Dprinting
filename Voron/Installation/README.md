@@ -1,4 +1,4 @@
-Software installation
+The below consists my personal documentation of the steps performed when I built my Voron and should not be considered as a guide for someone else.
 
 # Install Mainsail
 
@@ -59,3 +59,29 @@ Guide followed: https://docs.vorondesign.com/build/software/spider_klipper.html
 3)	Execute: `cd ~/klipper`
 4)	Execute: `make clean`
 5)	Execute: `make menuconfig`
+
+In the menu that opened, do the following:
+1)	The first item you should land on is “Enable extra low-level configuration options”. Press spacebar to enable it
+2)	Move down to “Micro-controller Architecture” and press spacebar to go into the submenu. In the submenu, move down to STMicroelectronics STM32 and press spacebar. It should move you back to the previous menu and “STMicroelectronics STM32” should appear in a parenthesis next to the Micro-Controller Architecture menu.
+3)	Move down to “Processor model” and press spacebar. In the submenu, move down to STM32F446 and press space bar
+4)	Move down to “Bootloader offset” and press spacebar. In the submenu, select “64KiB bootloader” and press spacebar. <span style="color:red">**Note**</span>: in the documentation, the following is mentioned:  
+![bootloader_offset](https://github.com/EvripB/3Dprinting/blob/main/Voron/Installation/images/bootloader_offset.png?raw=true)
+Asked in Voron Discord and there is no way we can tell when the board was made. I ordered mine on 15/7/2021 which is very close to the above dates. I was advised to try with 64KiB first. If the value is wrong, the board won’t boot  
+
+5)	Move down to “Clock Reference” and press spacebar. In the submenu, select “12 MHz crystal”
+6)	Move down to “Communication interface”. In the submenu, select “USB (on PA11/PA12)”.
+7)	The final configuration should look like this:  
+![make_config](https://github.com/EvripB/3Dprinting/blob/main/Voron/Installation/images/make_config.png?raw=true)
+
+Validate the configuration is correct and press “q” to exit.  
+
+Press “Y” to save the configuration
+
+8)	Execute: `make`
+The output is the firmware that needs to be installed on the board. It is located in `/home/pi/klipper/out` and it is named `klipper.bin`.
+
+9)	There are several ways to flash the firmware into the Spider board. We will use the sd-card method mentioned in the documentation. Login into Rpi via WinSCP or Moba’s SFTP and download the klipper.bin we created in step (8). I maintain these firmwares in `E:\MyFiles\Documents\3D_Printing\Voron\Software\klipper`  
+10)	Rename the downloaded file from `klipper.bin` to `firmware.bin`  
+11)	Connect the sd-card and paste the firmware.bin file into it. The card should be formatted in FAT32.  
+12)	Remove the card from PC, insert it into Spider board and power-on the printer. There is a flashing-red led on the board which will light-up while installing the new firmware. Wait a minute or two (I’m not sure if the flash is finished when the light turns off) and turn off the printer
+13)	Remove the sd-card from the printer
