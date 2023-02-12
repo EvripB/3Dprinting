@@ -1,7 +1,8 @@
+# Table of Contents
 - [PRINT_START macro](#print-start-macro)
 - [PRINT_END macro](#print-end-macro)
 - [G32 macro](#g32-macro)
-- [Force G32](#force-g32)
+- [Force G32 macro](#force-g32-macro)
 - [SERVICE macro](#service-macro)
 
 # PRINT_START macro
@@ -77,7 +78,7 @@ gcode:
     #--------------------------------------------------------------------
 ```
 
-# Force G32
+# Force G32 macro
 
 Due to the above conditional G32, we need a different macro for when we need to re-execute `QUAD_GANTRY_LEVEL` and `BED_MESH_CALIBRATE` even if they already have values, without restarting the printer.
 
