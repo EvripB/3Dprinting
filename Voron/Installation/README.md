@@ -65,7 +65,7 @@ In the menu that opened, do the following:
 2)	Move down to “Micro-controller Architecture” and press spacebar to go into the submenu. In the submenu, move down to STMicroelectronics STM32 and press spacebar. It should move you back to the previous menu and “STMicroelectronics STM32” should appear in a parenthesis next to the Micro-Controller Architecture menu.
 3)	Move down to “Processor model” and press spacebar. In the submenu, move down to STM32F446 and press space bar
 4)	Move down to “Bootloader offset” and press spacebar. In the submenu, select “64KiB bootloader” and press spacebar. <span style="color:red">**Note**</span>: in the documentation, the following is mentioned:  
-![bootloader_offset](https://github.com/EvripB/3Dprinting/blob/main/Voron/Installation/images/bootloader_offset.png?raw=true)
+![bootloader_offset](https://github.com/EvripB/3Dprinting/blob/main/Voron/Installation/images/bootloader_offset.png?raw=true)  
 Asked in Voron Discord and there is no way we can tell when the board was made. I ordered mine on 15/7/2021 which is very close to the above dates. I was advised to try with 64KiB first. If the value is wrong, the board won’t boot  
 
 5)	Move down to “Clock Reference” and press spacebar. In the submenu, select “12 MHz crystal”
