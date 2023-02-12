@@ -1,5 +1,10 @@
 The below consists my personal documentation of the steps performed when I built my Voron and should not be considered as a guide for someone else.
 
+- [Install Mainsail](#install-mainsail)
+- [Boot Rpi](#boot-rpi)
+- [Build & install Firmware](#build---install-firmware)
+- [Wi-Fi disconnections fix](#Wi-Fi-disconnections-fix)
+
 # Install Mainsail
 
 Guide followed: https://docs.vorondesign.com/build/software/installing_mainsail.html
@@ -84,4 +89,31 @@ The output is the firmware that needs to be installed on the board. It is locate
 10)	Rename the downloaded file from `klipper.bin` to `firmware.bin`  
 11)	Connect the sd-card and paste the firmware.bin file into it. The card should be formatted in FAT32.  
 12)	Remove the card from PC, insert it into Spider board and power-on the printer. There is a flashing-red led on the board which will light-up while installing the new firmware. Wait a minute or two (I’m not sure if the flash is finished when the light turns off) and turn off the printer
-13)	Remove the sd-card from the printer
+13)	Remove the sd-card from the printer  
+
+
+# Wi-Fi disconnections fix
+
+Guide followed: https://weworkweplay.com/play/rebooting-the-raspberry-pi-when-it-loses-wireless-connection-wifi/
+1)	Log into Rpi and execute:
+`cd /usr/local/bin`
+`sudo touch checkwifi.sh`
+`sudo chmod 775 checkwifi.sh`
+`sudo vi checkwifi.sh`
+2)	Paste the following code
+```
+ping -c4 192.168.1.254 > /dev/null
+
+if [ $? != 0 ]
+then
+  echo "No network connection, restarting wlan0"
+  /sbin/ifdown 'wlan0'
+  sleep 5
+  /sbin/ifup --force 'wlan0'
+fi
+```
+3)	Execute `crontab -e` and add the following line  
+```*/1 * * * * /usr/bin/sudo -H /usr/local/bin/checkwifi.sh >> /dev/null 2>&1```
+
+4)	Verify cron execution with the below command  
+```sudo grep CRON /var/log/syslog```
