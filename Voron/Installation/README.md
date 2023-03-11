@@ -4,6 +4,7 @@ The below consists my personal documentation of the steps performed when I built
 - [Boot Rpi](#boot-rpi)
 - [Build & install Firmware](#build---install-firmware)
 - [Wi-Fi disconnections fix](#Wi-Fi-disconnections-fix)
+- [Disable WiFi](#Disable-wifi)
 
 # Install Mainsail
 
@@ -121,3 +122,22 @@ fi
 
 4)	Verify cron execution with the below command  
 ```sudo grep CRON /var/log/syslog```
+
+# Disable WiFi
+
+If you are working with Ethernet and would like to disable WiFi on Rpi, modify config.txt with your prefered edit:
+```
+sudo vi /boot/config.txt
+or
+sudo nano /boot/config.txt
+```
+at the end of the file there should be an `[ALL]` section. Add the following right after it:
+```
+dtoverlay=disable-wifi
+```
+it should look something like this:
+```
+[ALL]
+dtoverlay=disable-wifi
+```
+Executing `ifconfig` will not contain `wlan0` adapter
