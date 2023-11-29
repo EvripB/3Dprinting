@@ -141,3 +141,28 @@ it should look something like this:
 dtoverlay=disable-wifi
 ```
 Executing `ifconfig` will not contain `wlan0` adapter
+
+# Crowsnest upgrade bug
+
+Found the bug discusion here: https://github.com/dw-0/kiauh/issues/342
+
+The documented commands are for Debian 11.
+
+For Debian 10, the following should be executed:
+```
+cd crowsnest
+git fetch && git pull
+git checkout legacy/v3
+sudo systemctl restart crowsnest.service
+```
+
+Also add the below in moonraker.conf (comment-out the previous `[update_manager crowsnest]`)
+```
+# Crowsnest update_manager entry
+[update_manager crowsnest]
+type: git_repo
+path: ~/crowsnest
+origin: https://github.com/mainsail-crew/crowsnest.git
+primary_branch: legacy/v3
+managed_services: crowsnest
+```
