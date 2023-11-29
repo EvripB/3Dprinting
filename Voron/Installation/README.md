@@ -54,7 +54,7 @@ b.	Select option “5 Localisation Options”
 c.	Select option “L2 Timezone”  
 d.	Select “Europe”  
 e.	Select “Athens”  
-f.	Select “Finish” (of whatever.. just exit the config)  
+f.	Select “Finish” (or whatever.. just exit the config)  
 6)	Execute: `sudo raspi-config` and select “8 Update”. Wait until it finishes. Usually there are no updates to be performed
 
 # Build & install Firmware
