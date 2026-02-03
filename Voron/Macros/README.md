@@ -24,6 +24,9 @@ gcode:
     G92 E0
     G1 Z2.0 F3000                 ; Move Z Axis up
     G1 E-0.5 F3600
+    M300 S1319 P30
+    M300 S1760 P30
+    M300 S2349 P70
 ```
 
 # PRINT_END macro
@@ -43,6 +46,11 @@ gcode:
     G90                            ; absolute positioning
     G0  X125 Y250 F3600            ; park nozzle at rear
     #BED_MESH_CLEAR
+    M300 S1319 P70
+    M300 S1568 P90
+    G4 P80
+    M300 S1319 P70
+    M300 S988  P140
 ```
 
 # G32 macro
@@ -100,4 +108,67 @@ The below macro will bring the toolhead at the front of the printer to perform "
 gcode:
     G90                      ; absolute positioning
     G0 X235 Y20 Z35 F3600    ; move to X235 Y20 Z35
+```
+
+The below macro is used after lubing the linear rails and moves printhead in all axes (XYZ) at the same time at a slow speed.
+
+```
+[gcode_macro LUBE_RAILS]
+description: Continuous diagonal moves where X,Y,Z all move every segment (CoreXY + Z rails)
+# Usage example:
+#   LUBE_RAILS REPEATS=5 SPEED=120 Z_MIN=20 Z_MAX=200 MARGIN=5 ACCEL=6000 ACCEL_TO_DECEL=3000
+gcode:
+    # -------- Parameters (with defaults) --------
+    {% set speed   = params.SPEED|default(120)|float %}
+    {% set repeats = params.REPEATS|default(1)|int %}
+    {% set zmin    = params.Z_MIN|default(20)|float %}
+    {% set zmax    = params.Z_MAX|default(200)|float %}
+    {% set margin  = params.MARGIN|default(5)|float %}
+    {% set accel   = params.ACCEL|default(6000)|float %}
+    {% set a2d     = params.ACCEL_TO_DECEL|default(3000)|float %}
+
+    # -------- Derived values --------
+    {% set xmin = margin %}
+    {% set ymin = margin %}
+    {% set xmax = printer.toolhead.axis_maximum.x - margin %}
+    {% set ymax = printer.toolhead.axis_maximum.y - margin %}
+    {% set f_xyz = speed * 60 %}
+
+    M400
+    G90
+
+    # Home if needed
+    {% if printer.toolhead.homed_axes != "xyz" %}
+        G28
+    {% endif %}
+
+    # Basic sanity clamps (optional but recommended)
+    {% if repeats < 1 %}
+        {action_raise_error("REPEATS must be >= 1")}
+    {% endif %}
+    {% if zmax <= zmin %}
+        {action_raise_error("Z_MAX must be > Z_MIN")}
+    {% endif %}
+    {% if xmax <= xmin or ymax <= ymin %}
+        {action_raise_error("MARGIN too large for bed size")}
+    {% endif %}
+
+    # Move to start
+    G1 X{xmin} Y{ymin} Z{zmin} F{f_xyz}
+
+    # Set motion limits
+    SET_VELOCITY_LIMIT VELOCITY={speed} ACCEL={accel} ACCEL_TO_DECEL={a2d}
+
+    # Pattern
+    {% for i in range(repeats) %}
+        G1 X{xmax} Y{ymax} Z{zmax} F{f_xyz}
+        G1 X{xmin} Y{ymin} Z{zmin} F{f_xyz}
+
+        G1 X{xmin} Y{ymax} Z{zmax} F{f_xyz}
+        G1 X{xmax} Y{ymin} Z{zmin} F{f_xyz}
+    {% endfor %}
+
+    # Park
+    G1 X{(xmax + xmin)/2} Y{(ymax + ymin)/2} Z{zmin} F{f_xyz}
+    M400
 ```
