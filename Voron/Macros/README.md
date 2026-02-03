@@ -4,6 +4,7 @@
 - [G32 macro](#g32-macro)
 - [Force G32 macro](#force-g32-macro)
 - [SERVICE macro](#service-macro)
+- [LUBE_RAILS macro](#lube_rails-macro)
 
 # PRINT_START macro
 
@@ -109,6 +110,8 @@ gcode:
     G90                      ; absolute positioning
     G0 X235 Y20 Z35 F3600    ; move to X235 Y20 Z35
 ```
+
+# LUBE_RAILS macro
 
 The below macro is used after lubing the linear rails and moves printhead in all axes (XYZ) at the same time at a slow speed.
 
