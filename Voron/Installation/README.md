@@ -8,39 +8,8 @@ The below consists my personal documentation of the steps performed when I built
 
 # Install Mainsail
 
-Guide followed: https://docs.vorondesign.com/build/software/installing_mainsail.html
-1)	Download MainsailOS (around 1GB). It should be a .zip file: https://github.com/raymondh2/MainsailOS/releases
-
-2)	Unzip the downloaded file. It should contain an .img file
-
-3)	Open balenaEtcher
-
-4)	Select the .img file
-
-5)	Select the SD card. <span style="color:red">**Careful! It might have selected a normal drive**</span>
-
-6)	Open mainsailos-wpa-supplicant.txt and add the WiFi connections. Under “WPA/WPA2 secured”, add the following two networks:
-
-```
-## WPA/WPA2 secured
-network={
-  ssid="addYourSSID"
-  psk="addYourPasswordHere"
-}
-
-network={
-  ssid="addAnotherSSID"
-  psk=" addYourPasswordHere"
-}
-```
-
-7)	Scroll near the end of the file where the country is set. Comment out any uncommented country and add the following line:
-
-```
-country=GR # Greece
-```
-
-8)	Safely remove the memory card and insert it into the Rpi
+Guide followed: https://docs.mainsail.xyz/mainsailos/getting-started/raspberry-pi/
+1)	Image is now incorporated into Raspberry Pi Imager (Other Specific-Purpose OS > 3D printing > Mainsail OS) so installation is straight forward
 
 # Boot Rpi
 
@@ -97,39 +66,85 @@ The output is the firmware that needs to be installed on the board. It is locate
 
 Rpi sometimes loses Wi-Fi connection and it doesn't reconnect without a restart, which is not possible during printing. The below fix will monitor Rpi's connection every 1 minute and restarts it if it is lost.
 
-Guide followed: https://weworkweplay.com/play/rebooting-the-raspberry-pi-when-it-loses-wireless-connection-wifi/
-
 1)	Log into Rpi and execute:  
-`cd /usr/local/bin`  
-`sudo touch checkwifi.sh`  
-`sudo chmod 775 checkwifi.sh`  
-`sudo vi checkwifi.sh`  
+`mkdir /home/pi/wifi_checker`  
 
 2)	Paste the following code
 ```
-ping -c4 192.168.1.254 > /dev/null
+#!/bin/bash
+set -e
 
-if [ $? != 0 ]
-then
-  echo "No network connection, restarting wlan0"
-  /sbin/ifdown 'wlan0'
-  sleep 5
-  /sbin/ifup --force 'wlan0'
+TARGET="192.168.1.254"
+IFACE="wlan0"
+
+if ! ping -I "$IFACE" -c 2 -W 3 "$TARGET" > /dev/null 2>&1; then
+    logger -t checkwifi "Ping to $TARGET failed on $IFACE; cycling Wi-Fi"
+    nmcli device disconnect "$IFACE" || true
+    sleep 5
+    nmcli device connect "$IFACE"
 fi
 ```
-3)	Execute `crontab -e` and add the following line  
-```*/1 * * * * /usr/bin/sudo -H /usr/local/bin/checkwifi.sh >> /dev/null 2>&1```
+3)	Execute `/etc/systemd/system/wifi_watchdog.service` and add the following:  
+```
+[Unit]
+Description=WiFi watchdog
 
-4)	Verify cron execution with the below command  
-```sudo grep CRON /var/log/syslog```
+[Service]
+Type=oneshot
+ExecStart=/home/pi/wifi_checker/wifi_watchdog.sh
+```
+
+4)	Make sure script is executable: `chmod +x /home/pi/wifi_checker/wifi_watchdog.sh`
+
+5) Reload systemd: `sudo systemctl daemon-reload`
+
+6) Start service manually to check if it will run successfully: `sudo systemctl start wifi_watchdog.service`
+
+Check the output of `journalctl -u wifi_watchdog.service`. It  should look like this:
+```
+Mar 15 21:19:33 mainsailOS systemd[1]: Starting wifi_watchdog.service - WiFi watchdog...
+Mar 15 21:19:34 mainsailOS systemd[1]: wifi_watchdog.service: Deactivated successfully.
+Mar 15 21:19:34 mainsailOS systemd[1]: Finished wifi_watchdog.service - WiFi watchdog.
+```
+
+7) If service is working, time to make the timer
+
+```sudo vi /etc/systemd/system/wifi_watchdog.timer```
+
+Inside, paste:
+```
+[Unit]
+Description=Run WiFi watchdog every minute
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=1min
+Unit=wifi_watchdog.service
+
+[Install]
+WantedBy=timers.target
+```
+
+Then execute:
+
+```
+sudo systemctl daemon-reload
+sudo systemctl enable --now wifi_watchdog.timer
+```
+
+8) Check timer status with the following
+```
+systemctl status wifi_watchdog.timer
+systemctl list-timers --all | grep wifi_watchdog
+```
 
 # Disable WiFi
 
 If you are working with Ethernet and would like to disable WiFi on Rpi, modify config.txt with your prefered edit:
 ```
-sudo vi /boot/config.txt
+sudo vi /boot/firmware/config.txt
 or
-sudo nano /boot/config.txt
+sudo nano /boot/firmware/config.txt
 ```
 at the end of the file there should be an `[ALL]` section. Add the following right after it:
 ```
