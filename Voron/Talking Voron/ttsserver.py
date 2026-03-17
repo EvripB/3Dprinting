@@ -20,7 +20,7 @@ def speak_text(text):
     if not os.path.exists(filename):
         cmd_piper = [
             "/home/pi/talking_voron/venv/bin/python", "-m", "piper",
-            "-m", "en_GB-southern_english_female-low",
+            "-m", "en_US-amy-medium",
             "-f", filename,
             "--", safe_text
         ]

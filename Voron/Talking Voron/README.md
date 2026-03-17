@@ -22,7 +22,8 @@ The below will work on MainsailOS
 `pip install piper-tts pathvalidate`  
 
 ### Download voice model
-`python -m piper.download_voices en_GB-southern_english_female-low`  
+`python -m piper.download_voices en_US-amy-medium`  
+You can find different voices and languages in [piper repo](https://huggingface.co/rhasspy/piper-voices/tree/main)
 
 ### Create helper script
 Create a file `nano ~/talking_voron/say.sh`  
@@ -35,7 +36,13 @@ Give "execute" permissions to the script
 `chmod +x ~/talking_voron/say.sh`  
 
 ### Download the TTS server
-NOTE: this version is modified from original creator's. 
+__Note__: This version is modified from the original project.  
+In the default implementation, each request triggers Piper to generate audio from scratch, which introduces a delay of ~6 seconds per phrase.  
+This modified version adds caching:  
+* Each unique text is converted to a .wav file once and stored in /tmp
+* Subsequent requests for the same text reuse the existing file
+* Result: first execution is slow, repeated executions are nearly instant  
+
 `wget -O ~/talking_voron/ttsserver.py https://raw.githubusercontent.com/EvripB/3Dprinting/main/Voron/Talking%20Voron/ttsserver.py`  
 
 ### Create systemd service
@@ -86,3 +93,4 @@ Save and restart klipper
 ### Testing
 In Mainsail's UI, execute the following command in the console
 `SAY S="Hello World"`  
+It will take few seconds to play the first time. Run it again and it should play instantly. 
