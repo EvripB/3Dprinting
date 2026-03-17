@@ -33,3 +33,56 @@ curl -G --data-urlencode "text=$*" http://127.0.0.1:4601/
 ```
 Give "execute" permissions to the script  
 `chmod +x ~/talking_voron/say.sh`  
+
+### Download the TTS server
+
+`wget -O ~/talking_voron/ttsserver.py https://raw.githubusercontent.com/EvripB/3Dprinting/main/Voron/Talking%20Voron/ttsserver.py`  
+
+### Create systemd service
+Create a file `sudo nano /etc/systemd/system/ttsserver.service`  
+Paste the following code and save
+```
+[Unit]
+Description=Text-to-Speech Web Server
+After=network.target
+
+[Service]
+ExecStart=/home/pi/talking_voron/venv/bin/python /home/pi/talking_voron/ttsserver.py
+WorkingDirectory=/home/pi/talking_voron
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### Enable and start service
+`sudo systemctl daemon-reload`  
+`sudo systemctl enable --now ttsserver.service`  
+
+### Get gcode_shell_command.py
+NOTE: if you have kiauh installed already, you can skip this step
+`cd ~/klipper/klippy/extras`  
+`wget https://raw.githubusercontent.com/dw-0/kiauh/master/kiauh/extensions/gcode_shell_cmd/assets/gcode_shell_command.py`  
+
+### Add Klipper macro
+```
+[gcode_macro SAY]
+gcode:
+    {% set s = params.S|default("") %}
+    {% if s == "" %}
+        {action_respond_info('Usage: SAY S="your text here"')}
+    {% else %}
+        RUN_SHELL_COMMAND CMD=RUNSAY PARAMS="{s}"
+    {% endif %}
+
+[gcode_shell_command RUNSAY]
+command: /home/pi/talking_voron/say.sh
+timeout: 30.0
+verbose: True
+```
+Save and restart klipper
+
+### Testing
+In Mainsail's UI, execute the following command in the console
+`SAY S="Hello World"`  
