@@ -2,12 +2,8 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
 import subprocess
 import threading
-import queue
-import time
 import os
-
-# Global request queue
-request_queue = queue.Queue()
+import re
 
 # Repeat controller
 repeat_event = threading.Event()
@@ -16,11 +12,14 @@ repeat_thread = None
 def speak_text(text):
     """Run Piper for text and then play via aplay."""
     safe_text = text.replace('"', '\\"')
-    filename = "/tmp/" + safe_text.replace(" ", "_") + ".wav"
+    key = safe_text.lower().strip()
+    key = " ".join(key.split())
+    key = re.sub(r'[^a-z0-9 _-]', '', key)
+    filename = "/tmp/" + key.replace(" ", "_") + ".wav"
 
     if not os.path.exists(filename):
         cmd_piper = [
-            "/home/pi/piper-venv/bin/python", "-m", "piper",
+            "/home/pi/talking_voron/venv/bin/python", "-m", "piper",
             "-m", "en_GB-southern_english_female-low",
             "-f", filename,
             "--", safe_text

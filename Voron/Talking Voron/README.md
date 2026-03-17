@@ -35,7 +35,7 @@ Give "execute" permissions to the script
 `chmod +x ~/talking_voron/say.sh`  
 
 ### Download the TTS server
-
+NOTE: this version is modified from original creator's. 
 `wget -O ~/talking_voron/ttsserver.py https://raw.githubusercontent.com/EvripB/3Dprinting/main/Voron/Talking%20Voron/ttsserver.py`  
 
 ### Create systemd service
