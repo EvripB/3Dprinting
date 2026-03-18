@@ -23,7 +23,7 @@ Voron's STLs for RPI mount in the electronics bay is very close this this amplif
  Make sure amplifier's potentiometer is at max volume when you install the board as you probably won't have access to it later. You can adjust the volume from mainsailOS later.
 
 # Software
-The below will work on MainsailOS
+The below will work on MainsailOS v2.2.2
 
 ### Create project directory
 `mkdir -p ~/talking_voron`  
