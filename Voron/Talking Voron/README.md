@@ -3,7 +3,8 @@
 Original implementation by:
 https://github.com/robandwend/SV08-MultiHead-Conversion/tree/main/talkingserver
 
-This version includes modifications such as caching so be careful 
+This version includes modifications such as caching so be careful which ttsserver.py you use.  
+
 # Hardware:  
 1x ["TPA3118D2 Digital Audio Power Amplifier Board 45W*2 Daul Channel TPA3118 Stereo Power Amplifier Speaker Subwoofer DC 12V 24V 28V"](https://www.aliexpress.com/item/1005007622704966.html?spm=a2g0o.order_list.order_list_main.84.3fe31802zBjUHT)  
 2x [8ohm 3W speakers](https://www.aliexpress.com/item/1005008267342362.html?spm=a2g0o.order_list.order_list_main.78.3fe31802zBjUHT)  
