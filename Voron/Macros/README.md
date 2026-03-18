@@ -175,3 +175,39 @@ gcode:
     G1 X{(xmax + xmin)/2} Y{(ymax + ymin)/2} Z{zmin} F{f_xyz}
     M400
 ```
+
+# Hotend temperature monitor macro
+The below macro compares the current hotend temperature with the desired one every 5 seconds. If hotend is 3 degrees or more below the desired temperature, it will play an alarm sound from printer's beeper and it will also speak a warning if you have [Talking Voron](https://github.com/EvripB/3Dprinting/tree/main/Voron/Talking%20Voron) enabled
+```
+[gcode_macro TEMP_MONITOR_START]
+description: Start monitoring hotend temperature
+gcode:
+    UPDATE_DELAYED_GCODE ID=temp_watchdog DURATION=5
+
+[gcode_macro TEMP_MONITOR_STOP]
+description: Stop monitoring hotend temperature
+gcode:
+    UPDATE_DELAYED_GCODE ID=temp_watchdog DURATION=0
+
+[delayed_gcode temp_watchdog]
+gcode:
+    {% set target = printer.extruder.target|float %}
+    {% set actual = printer.extruder.temperature|float %}
+    {% set threshold = 3 %}
+
+    {% if target > 0 and (target - actual) >= threshold %}
+        M300 S2000 P150
+        M300 S1200 P150
+        M300 S2000 P150
+        M300 S1200 P150
+        M300 S2000 P150
+        M300 S1200 P150
+        M300 S2000 P150
+        M300 S1200 P150
+        M300 S2000 P150
+        M300 S1200 P150
+        SAY S="warning! warning! Hotend temperature too low!"
+    {% endif %}
+
+    UPDATE_DELAYED_GCODE ID=temp_watchdog DURATION=5
+```
