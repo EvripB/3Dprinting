@@ -94,3 +94,17 @@ Save and restart klipper
 In Mainsail's UI, execute the following command in the console
 `SAY S="Hello World"`  
 It will take few seconds to play the first time. Run it again and it should play instantly. 
+
+### Useful commands
+Add this in your `PRINT_START` macro  
+`SAY S="Print is starting"`  
+
+Add this in your `PRINT_END` macro
+`SAY S="Print completed"`  
+
+To modify the volume of your rpi, first run:  
+`amixer scontrols`  
+The output should be something like this: `Simple mixer control 'PCM',0`. You need the text between the ' ' which, in my case, is PCM.  
+
+Set the desired volume represended in percentage and replace 'PCM' with whatever you found in the previous command:  
+`amixer set PCM 95%`
