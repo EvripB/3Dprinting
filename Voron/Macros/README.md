@@ -5,6 +5,7 @@
 - [Force G32 macro](#force-g32-macro)
 - [SERVICE macro](#service-macro)
 - [LUBE_RAILS macro](#lube_rails-macro)
+- [Hotend temperature monitor macro](#hotend-temperature-monitor-macro)
 
 # PRINT_START macro
 

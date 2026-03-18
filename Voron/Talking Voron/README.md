@@ -102,6 +102,9 @@ Add this in your `PRINT_START` macro:
 Add this in your `PRINT_END` macro:  
 `SAY S="Print completed"`  
 
+If you have [hotend temperature macro](https://github.com/EvripB/3Dprinting/tree/main/Voron/Talking%20Voron), add this in [delayed_gcode temp_watchdog]:  
+`SAY S="warning! warning! Hotend temperature too low!"`  
+
 To modify the volume of your rpi, first run:  
 `amixer scontrols`  
 The output should be something like this: `Simple mixer control 'PCM',0`. You need the text between the ' ' which, in my case, is PCM. If you get both 'PCM' and 'Master', try both of them in the below command to see which one works for you.
