@@ -5,6 +5,10 @@ All credits go to original creator: https://github.com/robandwend/SV08-MultiHead
 2x [8ohm 3W speakers](https://www.aliexpress.com/item/1005008267342362.html?spm=a2g0o.order_list.order_list_main.78.3fe31802zBjUHT)  
 1x barrel power connector (5.5 * 2.1)  
 1x Male-to-Male TRS jack (the ones with 3 contacts, not the ones with 4 which support microphones as well)  
+4x M2x10 self-taping screws  
+
+Voron's STLs for RPI mount in the electronics bay is very close this this amplifiers' size. Holes don't align perfectly but you can screw at least 2 of them which is sufficient.  
+ Print [pcb_din_clip_x3.stl](https://github.com/VoronDesign/Voron-2/blob/Voron2.4/STLs/Electronics_Bay/pcb_din_clip_x3.stl) and [raspberrypi_bracket.stl](https://github.com/VoronDesign/Voron-2/blob/Voron2.4/STLs/Electronics_Bay/raspberrypi_bracket.stl)
 
 # Software
 The below will work on MainsailOS
