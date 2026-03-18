@@ -7,8 +7,15 @@ All credits go to original creator: https://github.com/robandwend/SV08-MultiHead
 1x Male-to-Male TRS jack (the ones with 3 contacts, not the ones with 4 which support microphones as well)  
 4x M2x10 self-taping screws  
 
+You can buy any amplifier/speaker you like. My criteria for the amplifier was:
+1. To be able to work with 24V so i can power it from printer's power supply
+2. To have an audio jack input for easy connection with rpi
+3. To have a volume knob which I could insert inside skirt's hex hole to control from outside but the orientation of the mounting bracket (see below) doesn't allow for that
+
 Voron's STLs for RPI mount in the electronics bay is very close this this amplifiers' size. Holes don't align perfectly but you can screw at least 2 of them which is sufficient.  
- Print [pcb_din_clip_x3.stl](https://github.com/VoronDesign/Voron-2/blob/Voron2.4/STLs/Electronics_Bay/pcb_din_clip_x3.stl) and [raspberrypi_bracket.stl](https://github.com/VoronDesign/Voron-2/blob/Voron2.4/STLs/Electronics_Bay/raspberrypi_bracket.stl)
+ Print [pcb_din_clip_x3.stl](https://github.com/VoronDesign/Voron-2/blob/Voron2.4/STLs/Electronics_Bay/pcb_din_clip_x3.stl) and [raspberrypi_bracket.stl](https://github.com/VoronDesign/Voron-2/blob/Voron2.4/STLs/Electronics_Bay/raspberrypi_bracket.stl)  
+
+ Make sure amplifier's potentiometer is at max volume when you install the board as you probably won't have access to it later. You can adjust the volume from mainsailOS later.
 
 # Software
 The below will work on MainsailOS
