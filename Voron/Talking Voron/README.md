@@ -102,7 +102,7 @@ Add this in your `PRINT_START` macro:
 Add this in your `PRINT_END` macro:  
 `SAY S="Print completed"`  
 
-If you have [hotend temperature macro](https://github.com/EvripB/3Dprinting/tree/main/Voron/Talking%20Voron), add this in [delayed_gcode temp_watchdog]:  
+If you have [hotend temperature macro](https://github.com/EvripB/3Dprinting/blob/main/Voron/Macros/README.md#hotend-temperature-monitor-macro), add this in [delayed_gcode temp_watchdog]:  
 `SAY S="warning! warning! Hotend temperature too low!"`  
 
 To modify the volume of your rpi, first run:  

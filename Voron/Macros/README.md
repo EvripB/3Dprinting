@@ -207,6 +207,8 @@ gcode:
         M300 S1200 P150
         M300 S2000 P150
         M300 S1200 P150
+        # add a 1.5sec dwell for M300 beeps to finish before the spoken text is triggered. Otherwise, they will overlap. 
+        G4 P1500
         SAY S="warning! warning! Hotend temperature too low!"
     {% endif %}
 
