@@ -15,7 +15,7 @@ def speak_text(text):
     key = safe_text.lower().strip()
     key = " ".join(key.split())
     key = re.sub(r'[^a-z0-9 _-]', '', key)
-    filename = "/tmp/" + key.replace(" ", "_") + ".wav"
+    filename = "/home/pi/talking_voron/cache/" + key.replace(" ", "_") + ".wav"
 
     if not os.path.exists(filename):
         cmd_piper = [
