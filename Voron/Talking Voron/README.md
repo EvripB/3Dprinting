@@ -11,6 +11,7 @@ This version includes modifications such as caching so be careful which ttsserve
 1x barrel power connector (5.5 * 2.1)  
 1x Male-to-Male TRS jack (the ones with 3 contacts, not the ones with 4 which support microphones as well)  
 4x M2x10 self-taping screws  
+❗In case you're hearing a pulsing sound when hotend is hot, that's comming from heater's PWM signal and you need to add ferrite cores to 3.5mm jack cable and power cable. Haven't tested it myself yet.
 
 You can buy any amplifier/speaker you like. My criteria for the amplifier was:
 1. To be able to work with 24V so i can power it from printer's power supply
