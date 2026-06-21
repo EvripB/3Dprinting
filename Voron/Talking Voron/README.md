@@ -83,13 +83,17 @@ WantedBy=multi-user.target
 ```
 
 ### Enable and start service
-`sudo systemctl daemon-reload`  
-`sudo systemctl enable --now ttsserver.service`  
+```
+sudo systemctl daemon-reload  
+sudo systemctl enable --now ttsserver.service
+```  
 
 ### Get gcode_shell_command.py
-NOTE: if you have kiauh installed already, you can skip this step
-`cd ~/klipper/klippy/extras`  
-`wget https://raw.githubusercontent.com/dw-0/kiauh/master/kiauh/extensions/gcode_shell_cmd/assets/gcode_shell_command.py`  
+NOTE: if you have kiauh installed already, you can skip this step  
+```
+cd ~/klipper/klippy/extras  
+wget https://raw.githubusercontent.com/dw-0/kiauh/master/kiauh/extensions/gcode_shell_cmd/assets/gcode_shell_command.py
+```  
 
 ### Add Klipper macro
 ```
