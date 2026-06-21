@@ -111,6 +111,26 @@ command: /home/pi/talking_voron/say.sh
 timeout: 30.0
 verbose: True
 ```
+
+Optionally, you can also set the following macro to modify the Volume from Mainsail without having to ssh into rpi
+```
+[gcode_macro SET_VOLUME]
+description: Set Raspberry Pi audio volume
+gcode:
+    {% set volume = params.Volume|default(80)|int %}
+    {% set silent = params.SILENT|default(0)|int %}
+
+    {% if volume < 0 or volume > 100 %}
+        {action_respond_info("Volume must be between 0 and 100")}
+    {% else %}
+        RUN_SHELL_COMMAND CMD=SETVOLUME PARAMS={volume}
+        G4 P300
+        {% if silent == 0 %}
+            SAY S="Volume set to {volume} percent"
+        {% endif %}
+    {% endif %}
+```
+
 Save and restart klipper
 
 ### Testing
