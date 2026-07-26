@@ -109,8 +109,8 @@ class TTSHandler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    # use IP 0.0.0.0 if you need Talking Voron to be reachable from other devices on your network.
-    # use IP 127.0.0.1 if you want to restrict access to Talking Voron from only within rpi
+    # Use 127.0.0.1 when Klipper and Talking Voron run on the same Raspberry Pi.
+    # Using 0.0.0.0 allows unauthenticated access from any device on the local network.
     server = HTTPServer(("127.0.0.1", 4601), TTSHandler)
     print("Server running on port 4601...")
     server.serve_forever()

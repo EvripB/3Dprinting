@@ -26,6 +26,13 @@ Voron's STLs for RPI mount in the electronics bay is very close this this amplif
 # Software
 The below will work on MainsailOS v2.2.2
 
+### Network access and security
+Talking Voron is intentionally accessible only from the same Raspberry Pi. The HTTP server listens on `127.0.0.1`, so other devices on the local network cannot send speech or audio playback requests. This setup assumes Klipper and Talking Voron are running on the same Raspberry Pi.
+
+If you need to use a different port, update both the URL in `say.sh` and the `HTTPServer` line in `ttsserver.py`. Keep the server bound to `127.0.0.1` to preserve localhost-only access.
+
+If Klipper and Talking Voron run on different devices, you can bind the server to `0.0.0.0` and update the URL in `say.sh` to use the Raspberry Pi's IP address. This allows unauthenticated speech and audio playback requests from any device on the local network, so use it only on a trusted network.
+
 ### Create project directory
 `mkdir -p ~/talking_voron`  
 `cd ~/talking_voron`  
@@ -49,7 +56,6 @@ Paste the following code and save
 #!/bin/bash
 curl -G --data-urlencode "text=$*" http://127.0.0.1:4601/
 ```
-*if for any reason you want to use a different port, you should modify the ttsserver.py as well. Just search for "4601" and replace with your own. It appears only 2 times at the end of the script.*  
 
 Give "execute" permissions to the script  
 `chmod +x ~/talking_voron/say.sh`  
