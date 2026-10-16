@@ -1,74 +1,77 @@
-# WiFi Watchdog for MainsailOS (Debian / NetworkManager)
+# Wi-Fi watchdog for MainsailOS
 
-This setup monitors WiFi connectivity every 30 seconds and automatically reconnects if the connection drops. It also logs all activity to a file.
+The Raspberry Pi uses a custom Wi-Fi watchdog, separate from Sonar. The following matches the installed configuration checked on 16 October 2026.
 
----
+The watchdog checks `wlan0` approximately every 30 seconds, starting 30 seconds after boot. It checks for an IPv4 address and pings the first default gateway returned by the routing table through `wlan0`. If that check fails, it cycles the interface and restarts NetworkManager (or falls back to dhcpcd/wpa_supplicant if NetworkManager is inactive). Results are appended to `/home/pi/printer_data/logs/wifi_watchdog.log`.
 
-## Overview
+Perform installation and manual testing while the printer is idle: a failed check can restart networking and disconnect the SSH session. These instructions document the existing recovery mechanism; they do not identify or eliminate the underlying cause of Wi-Fi disconnections.
 
-- Checks connectivity via `ping`  
-- Uses `nmcli` (NetworkManager) to reconnect WiFi  
-- Runs every **30 seconds** via `systemd timer`  
-- Writes logs to:  
-`/home/pi/printer_data/logs/wifi_watchdog.log`
-
----
-
-## 1. Create the script
+1. Create the script directory and open the script:
 
 ```bash
 mkdir -p /home/pi/wifi_checker
 nano /home/pi/wifi_checker/wifi_watchdog.sh
 ```
 
-Paste:
+Paste and save:
 
-```
-#!/bin/bash
+```bash
+#!/usr/bin/env bash
 
-TARGET="192.168.1.1"
-IFACE="wlan0"
 LOG="/home/pi/printer_data/logs/wifi_watchdog.log"
-
+IFACE="wlan0"
 DATE="$(date '+%Y-%m-%d %H:%M:%S')"
 
 mkdir -p "$(dirname "$LOG")"
 
-if ping -I "$IFACE" -c 2 -W 3 "$TARGET" > /dev/null 2>&1; then
-    echo "$DATE OK: $IFACE can reach $TARGET" >> "$LOG"
+GW="$(ip route | awk '/default/ {print $3; exit}')"
+
+if ip link show "$IFACE" >/dev/null 2>&1 && \
+   ip -4 addr show "$IFACE" | grep -q "inet " && \
+   ping -I "$IFACE" -c 1 -W 3 "$GW" >/dev/null 2>&1; then
+    echo "$DATE OK: WiFi connected on $IFACE, gateway $GW reachable" >> "$LOG"
     exit 0
 fi
 
-echo "$DATE FAIL: Ping to $TARGET failed on $IFACE; cycling Wi-Fi" >> "$LOG"
-logger -t checkwifi "Ping to $TARGET failed on $IFACE; cycling Wi-Fi"
+echo "$DATE FAIL: WiFi appears down. Restarting $IFACE..." >> "$LOG"
 
-nmcli device disconnect "$IFACE" || true
+ip link set "$IFACE" down
+sleep 3
+ip link set "$IFACE" up
 sleep 5
-nmcli device connect "$IFACE" || true
+
+if systemctl is-active --quiet NetworkManager; then
+    systemctl restart NetworkManager
+elif systemctl is-active --quiet dhcpcd; then
+    systemctl restart dhcpcd
+elif systemctl is-active --quiet wpa_supplicant; then
+    systemctl restart wpa_supplicant
+fi
 
 sleep 10
 
-if ping -I "$IFACE" -c 2 -W 3 "$TARGET" > /dev/null 2>&1; then
-    echo "$DATE RECOVERY: $IFACE reconnected successfully" >> "$LOG"
+if ip -4 addr show "$IFACE" | grep -q "inet "; then
+    echo "$DATE RECOVERY: $IFACE has IP again" >> "$LOG"
 else
-    echo "$DATE RECOVERY_FAILED: $IFACE still cannot reach $TARGET" >> "$LOG"
+    echo "$DATE RECOVERY_FAILED: $IFACE still has no IP" >> "$LOG"
 fi
 ```
 
-Make it executable:  
-`chmod +x /home/pi/wifi_checker/wifi_watchdog.sh`
+2. Make the script executable:
 
----
+```bash
+chmod +x /home/pi/wifi_checker/wifi_watchdog.sh
+```
 
-## 2. Create systemd service
+3. Create the systemd service:
 
 ```bash
 sudo nano /etc/systemd/system/wifi_watchdog.service
 ```
 
-Paste:
+Paste and save:
 
-```
+```ini
 [Unit]
 Description=WiFi watchdog
 
@@ -77,17 +80,15 @@ Type=oneshot
 ExecStart=/home/pi/wifi_checker/wifi_watchdog.sh
 ```
 
----
-
-## 3. Create systemd timer (30 sec interval)
+4. Create the timer:
 
 ```bash
 sudo nano /etc/systemd/system/wifi_watchdog.timer
 ```
 
-Paste:
+Paste and save:
 
-```
+```ini
 [Unit]
 Description=Run WiFi watchdog every 30 seconds
 
@@ -101,64 +102,24 @@ Unit=wifi_watchdog.service
 WantedBy=timers.target
 ```
 
----
-
-## 4. Enable and start
+5. Check the script syntax, reload systemd and perform one manual test while idle:
 
 ```bash
+bash -n /home/pi/wifi_checker/wifi_watchdog.sh
 sudo systemctl daemon-reload
-sudo systemctl enable --now wifi_watchdog.timer
-```
-
----
-
-## 5. Verify it is running
-
-```bash
-systemctl status wifi_watchdog.timer
-systemctl list-timers --all | grep -i wifi
-```
-
----
-
-## 6. Test manually
-
-```bash
 sudo systemctl start wifi_watchdog.service
+journalctl -u wifi_watchdog.service -n 20 --no-pager
+tail -n 20 /home/pi/printer_data/logs/wifi_watchdog.log
 ```
 
----
+The log should report `OK: WiFi connected` when the check passes. On a failed check, inspect the `FAIL`, `RECOVERY` or `RECOVERY_FAILED` entries. `RECOVERY` means an IPv4 address returned; it does not itself verify gateway connectivity.
 
-## 7. View logs
-
-File log:
+6. Enable the timer and verify it:
 
 ```bash
-tail -f /home/pi/printer_data/logs/wifi_watchdog.log
+sudo systemctl enable --now wifi_watchdog.timer
+systemctl status wifi_watchdog.timer --no-pager
+systemctl list-timers --all wifi_watchdog.timer
 ```
 
-System log:
-
-```bash
-journalctl -t checkwifi -f
-```
-
----
-
-## 8. Check for existing/conflicting setups
-
-```bash
-systemctl list-timers --all | grep -i wifi
-systemctl list-units --all | grep -i wifi
-crontab -l | grep -i wifi
-sudo crontab -l | grep -i wifi
-```
-
----
-
-## Notes
-
-- Assumes NetworkManager is in use (`nmcli`)  
-- Default interface: `wlan0`  
-- Default gateway target: `192.168.1.1` (adjust if needed)  
-- `systemd timer` is used instead of cron for sub-minute execution
+The timer should be enabled and active. The service is `Type=oneshot`, so it normally appears inactive between checks; the timer invokes it again. There is no need to enable the service separately.
